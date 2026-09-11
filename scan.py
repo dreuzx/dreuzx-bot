@@ -184,7 +184,9 @@ def main():
     dex_candidates = build_repeat_winner_candidates(trades)
 
     if not dex_candidates:
-        print("No repeat-winner overlap found this run.")
+        msg = "No repeat-winner overlap found this run."
+        print(msg)
+        send_telegram(f"🩶 Meme Scanner ran — {msg}")
         return
 
     trending_rows = get_trending_screener()
@@ -200,7 +202,9 @@ def main():
         send_telegram(report)
         print(f"Sent report with {len(confirmed)} token(s).")
     else:
-        print(f"{len(dex_candidates)} overlap candidate(s) found, none confirmed trending this run.")
+        msg = f"{len(dex_candidates)} overlap candidate(s) found, none confirmed trending this run."
+        print(msg)
+        send_telegram(f"🩶 Meme Scanner ran — {msg}")
 
 
 if __name__ == "__main__":
