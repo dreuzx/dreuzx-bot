@@ -21,6 +21,32 @@ from environment/secrets. That means:
 Only the optional `TWITTER_BEARER_TOKEN` still comes from GitHub Secrets
 (step 3 below).
 
+## New: on-demand /scantoken command (bot.py)
+
+`bot.py` is a separate, persistent program that does two things in one
+process:
+
+1. Runs the same scan every 15 minutes automatically
+2. Listens for you typing `/scantoken` in Telegram and runs the scan
+   immediately, replying only to you (it checks the chat ID)
+
+**This needs to run continuously somewhere** — GitHub Actions cron can't
+listen for incoming messages, it only wakes up on a schedule. Use one of:
+
+- **Railway** (easiest free option): New Project → Deploy from GitHub repo →
+  set the start command to `python bot.py` → deploy. It'll restart
+  automatically if it crashes and stays running 24/7.
+- **Render**: New → Background Worker → connect the repo → start command
+  `python bot.py`.
+- Any VPS / always-on machine you already have: `pip install -r
+  requirements.txt && python bot.py`, ideally under something like `tmux`,
+  `screen`, or a systemd service so it survives you closing the terminal.
+
+**Important — turn off the old cron workflow.** If `bot.py` is running,
+delete or disable `.github/workflows/meme-scan.yml` (Actions tab → Meme
+Scanner → "..." → Disable workflow). Otherwise you'll get duplicate scans:
+one from the GitHub cron, one from `bot.py`'s internal 15-minute loop.
+
 ## Setup
 
 1. **Create a private repo** and push these files (`scan.py`,
